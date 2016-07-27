@@ -429,7 +429,7 @@ pub fn scrypt_check(password: &str, hashed_value: &str) -> Result<bool, &'static
         return Err(ERR_STR);
     }
 
-    let mut output: Vec<u8> = repeat(0).take(hash.len()).collect();
+    let mut output = vec![0u8; hash.len()];
     scrypt(password.as_bytes(), &*salt, &params, &mut output);
 
     Ok(constant_time::verify_slices_are_equal(&output, &hash).is_ok())
