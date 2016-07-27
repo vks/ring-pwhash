@@ -356,16 +356,14 @@ pub fn scrypt_check(password: &str, hashed_value: &str) -> Result<bool, &'static
 
     // Check that there are no characters before the first "$"
     match iter.next() {
-        Some(x) if x != "" => return Err(ERR_STR),
-        Some(_) => (),
-        None => return Err(ERR_STR)
+        Some(x) if x == "" => (),
+        _ => return Err(ERR_STR),
     }
 
     // Check the name
     match iter.next() {
-        Some(t) if t != "rscrypt" => return Err(ERR_STR),
-        Some(_) => (),
-        None => return Err(ERR_STR)
+        Some(t) if t == "rscrypt" => (),
+        _ => return Err(ERR_STR),
     }
 
     // Parse format - currenlty only version 0 (compact) and 1 (expanded) are supported
@@ -422,9 +420,8 @@ pub fn scrypt_check(password: &str, hashed_value: &str) -> Result<bool, &'static
 
     // Make sure that the input ends with a "$"
     match iter.next() {
-        Some(x) if x != "" => return Err(ERR_STR),
-        Some(_) => (),
-        None => return Err(ERR_STR)
+        Some(x) if x == "" => (),
+        _ => return Err(ERR_STR)
     }
 
     // Make sure there is no trailing data after the final "$"
