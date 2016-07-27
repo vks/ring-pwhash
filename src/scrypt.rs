@@ -368,36 +368,36 @@ pub fn scrypt_check(password: &str, hashed_value: &str) -> Result<bool, &'static
 
     // Parse format - currenlty only version 0 (compact) and 1 (expanded) are supported
     let params: ScryptParams;
-    match iter.next() {
-        Some(fstr) => {
-            // Parse the parameters - the size of them depends on the if we are using the compact or
-            // expanded format
-            let pvec = match iter.next() {
-                Some(pstr) => match pstr.from_base64() {
-                    Ok(x) => x,
-                    Err(_) => return Err(ERR_STR)
-                },
-                None => return Err(ERR_STR)
-            };
-            match fstr {
-                "0" => {
-                    if pvec.len() != 3 { return Err(ERR_STR); }
-                    let log_n = pvec[0];
-                    let r = pvec[1] as u32;
-                    let p = pvec[2] as u32;
-                    params = ScryptParams::new(log_n, r, p);
-                }
-                "1" => {
-                    if pvec.len() != 9 { return Err(ERR_STR); }
-                    let log_n = pvec[0];
-                    let mut pval = [0u32; 2];
-                    read_u32v_le(&mut pval, &pvec[1..9]);
-                    params = ScryptParams::new(log_n, pval[0], pval[1]);
-                }
-                _ => return Err(ERR_STR)
-            }
-        }
+    let fstr = match iter.next() {
+        Some(fstr) => fstr,
+        None => return Err(ERR_STR),
+    };
+
+    // Parse the parameters - the size of them depends on the if we are using the compact or
+    // expanded format
+    let pvec = match iter.next() {
+        Some(pstr) => match pstr.from_base64() {
+            Ok(x) => x,
+            Err(_) => return Err(ERR_STR)
+        },
         None => return Err(ERR_STR)
+    };
+    match fstr {
+        "0" => {
+            if pvec.len() != 3 { return Err(ERR_STR); }
+            let log_n = pvec[0];
+            let r = pvec[1] as u32;
+            let p = pvec[2] as u32;
+            params = ScryptParams::new(log_n, r, p);
+        }
+        "1" => {
+            if pvec.len() != 9 { return Err(ERR_STR); }
+            let log_n = pvec[0];
+            let mut pval = [0u32; 2];
+            read_u32v_le(&mut pval, &pvec[1..9]);
+            params = ScryptParams::new(log_n, pval[0], pval[1]);
+        }
+        _ => return Err(ERR_STR)
     }
 
     // Salt
