@@ -367,7 +367,6 @@ pub fn scrypt_check(password: &str, hashed_value: &str) -> Result<bool, &'static
     }
 
     // Parse format - currenlty only version 0 (compact) and 1 (expanded) are supported
-    let params: ScryptParams;
     let fstr = match iter.next() {
         Some(fstr) => fstr,
         None => return Err(ERR_STR),
@@ -382,23 +381,24 @@ pub fn scrypt_check(password: &str, hashed_value: &str) -> Result<bool, &'static
         },
         None => return Err(ERR_STR)
     };
-    match fstr {
+
+    let params = match fstr {
         "0" => {
             if pvec.len() != 3 { return Err(ERR_STR); }
             let log_n = pvec[0];
             let r = pvec[1] as u32;
             let p = pvec[2] as u32;
-            params = ScryptParams::new(log_n, r, p);
+            ScryptParams::new(log_n, r, p)
         }
         "1" => {
             if pvec.len() != 9 { return Err(ERR_STR); }
             let log_n = pvec[0];
             let mut pval = [0u32; 2];
             read_u32v_le(&mut pval, &pvec[1..9]);
-            params = ScryptParams::new(log_n, pval[0], pval[1]);
+            ScryptParams::new(log_n, pval[0], pval[1])
         }
         _ => return Err(ERR_STR)
-    }
+    };
 
     // Salt
     let salt = match iter.next() {
