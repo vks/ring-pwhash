@@ -214,15 +214,13 @@ impl ScryptParams {
         let r128 = r.checked_mul(128).expect("Invalid Scrypt parameters.");
 
         // check that n * r * 128 doesn't overflow
-        match r128.checked_mul(n) {
-            Some(_) => { },
-            None => panic!("Invalid Scrypt parameters.")
+        if r128.checked_mul(n).is_none() {
+            panic!("Invalid Scrypt parameters.");
         };
 
         // check that p * r * 128 doesn't overflow
-        match r128.checked_mul(p) {
-            Some(_) => { },
-            None => panic!("Invalid Scrypt parameters.")
+        if r128.checked_mul(p).is_none() {
+            panic!("Invalid Scrypt parameters.");
         };
 
         // This check required by Scrypt:
@@ -430,9 +428,8 @@ pub fn scrypt_check(password: &str, hashed_value: &str) -> Result<bool, &'static
     }
 
     // Make sure there is no trailing data after the final "$"
-    match iter.next() {
-        Some(_) => return Err(ERR_STR),
-        None => { }
+    if iter.next().is_some() {
+        return Err(ERR_STR);
     }
 
     let mut output: Vec<u8> = repeat(0).take(hash.len()).collect();
