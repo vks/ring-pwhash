@@ -133,7 +133,7 @@ fn scrypt_ro_mix(b: &mut [u8], v: &mut [u8], t: &mut [u8], n: usize) {
     }
 }
 
-pub fn read_u32_le(input: &[u8]) -> u32 {
+fn read_u32_le(input: &[u8]) -> u32 {
     assert!(input.len() == 4);
     unsafe {
         let mut tmp: u32 = mem::uninitialized();
@@ -142,7 +142,7 @@ pub fn read_u32_le(input: &[u8]) -> u32 {
     }
 }
 
-pub fn read_u32v_le(dst: &mut[u32], input: &[u8]) {
+fn read_u32v_le(dst: &mut[u32], input: &[u8]) {
     assert!(dst.len() * 4 == input.len());
     unsafe {
         let mut x: *mut u32 = dst.get_unchecked_mut(0);
@@ -157,7 +157,7 @@ pub fn read_u32v_le(dst: &mut[u32], input: &[u8]) {
     }
 }
 
-pub fn write_u32_le(dst: &mut[u8], mut input: u32) {
+fn write_u32_le(dst: &mut[u8], mut input: u32) {
     assert!(dst.len() == 4);
     input = input.to_le();
     unsafe {
@@ -168,7 +168,7 @@ pub fn write_u32_le(dst: &mut[u8], mut input: u32) {
 
 /// Copy bytes from src to dest
 #[inline]
-pub fn copy_memory(src: &[u8], dst: &mut [u8]) {
+fn copy_memory(src: &[u8], dst: &mut [u8]) {
     assert!(dst.len() >= src.len());
     unsafe {
         let srcp = src.as_ptr();
