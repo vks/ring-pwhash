@@ -211,21 +211,16 @@ impl ScryptParams {
         let n: usize = 1 << log_n;
 
         // check that r * 128 doesn't overflow
-        let r128 = match r.checked_mul(128) {
-            Some(x) => x,
-            None => panic!("Invalid Scrypt parameters.")
-        };
+        let r128 = r.checked_mul(128).expect("Invalid Scrypt parameters.");
 
         // check that n * r * 128 doesn't overflow
-        match r128.checked_mul(n) {
-            Some(_) => { },
-            None => panic!("Invalid Scrypt parameters.")
+        if r128.checked_mul(n).is_none() {
+            panic!("Invalid Scrypt parameters.");
         };
 
         // check that p * r * 128 doesn't overflow
-        match r128.checked_mul(p) {
-            Some(_) => { },
-            None => panic!("Invalid Scrypt parameters.")
+        if r128.checked_mul(p).is_none() {
+            panic!("Invalid Scrypt parameters.");
         };
 
         // This check required by Scrypt:
@@ -361,49 +356,49 @@ pub fn scrypt_check(password: &str, hashed_value: &str) -> Result<bool, &'static
 
     // Check that there are no characters before the first "$"
     match iter.next() {
-        Some(x) => if x != "" { return Err(ERR_STR); },
-        None => return Err(ERR_STR)
+        Some(x) if x == "" => (),
+        _ => return Err(ERR_STR),
     }
 
     // Check the name
     match iter.next() {
-        Some(t) => if t != "rscrypt" { return Err(ERR_STR); },
-        None => return Err(ERR_STR)
+        Some(t) if t == "rscrypt" => (),
+        _ => return Err(ERR_STR),
     }
 
     // Parse format - currenlty only version 0 (compact) and 1 (expanded) are supported
-    let params: ScryptParams;
-    match iter.next() {
-        Some(fstr) => {
-            // Parse the parameters - the size of them depends on the if we are using the compact or
-            // expanded format
-            let pvec = match iter.next() {
-                Some(pstr) => match pstr.from_base64() {
-                    Ok(x) => x,
-                    Err(_) => return Err(ERR_STR)
-                },
-                None => return Err(ERR_STR)
-            };
-            match fstr {
-                "0" => {
-                    if pvec.len() != 3 { return Err(ERR_STR); }
-                    let log_n = pvec[0];
-                    let r = pvec[1] as u32;
-                    let p = pvec[2] as u32;
-                    params = ScryptParams::new(log_n, r, p);
-                }
-                "1" => {
-                    if pvec.len() != 9 { return Err(ERR_STR); }
-                    let log_n = pvec[0];
-                    let mut pval = [0u32; 2];
-                    read_u32v_le(&mut pval, &pvec[1..9]);
-                    params = ScryptParams::new(log_n, pval[0], pval[1]);
-                }
-                _ => return Err(ERR_STR)
-            }
-        }
+    let fstr = match iter.next() {
+        Some(fstr) => fstr,
+        None => return Err(ERR_STR),
+    };
+
+    // Parse the parameters - the size of them depends on the if we are using the compact or
+    // expanded format
+    let pvec = match iter.next() {
+        Some(pstr) => match pstr.from_base64() {
+            Ok(x) => x,
+            Err(_) => return Err(ERR_STR)
+        },
         None => return Err(ERR_STR)
-    }
+    };
+
+    let params = match fstr {
+        "0" => {
+            if pvec.len() != 3 { return Err(ERR_STR); }
+            let log_n = pvec[0];
+            let r = pvec[1] as u32;
+            let p = pvec[2] as u32;
+            ScryptParams::new(log_n, r, p)
+        }
+        "1" => {
+            if pvec.len() != 9 { return Err(ERR_STR); }
+            let log_n = pvec[0];
+            let mut pval = [0u32; 2];
+            read_u32v_le(&mut pval, &pvec[1..9]);
+            ScryptParams::new(log_n, pval[0], pval[1])
+        }
+        _ => return Err(ERR_STR)
+    };
 
     // Salt
     let salt = match iter.next() {
@@ -425,17 +420,16 @@ pub fn scrypt_check(password: &str, hashed_value: &str) -> Result<bool, &'static
 
     // Make sure that the input ends with a "$"
     match iter.next() {
-        Some(x) => if x != "" { return Err(ERR_STR); },
-        None => return Err(ERR_STR)
+        Some(x) if x == "" => (),
+        _ => return Err(ERR_STR)
     }
 
     // Make sure there is no trailing data after the final "$"
-    match iter.next() {
-        Some(_) => return Err(ERR_STR),
-        None => { }
+    if iter.next().is_some() {
+        return Err(ERR_STR);
     }
 
-    let mut output: Vec<u8> = repeat(0).take(hash.len()).collect();
+    let mut output = vec![0u8; hash.len()];
     scrypt(password.as_bytes(), &*salt, &params, &mut output);
 
     Ok(constant_time::verify_slices_are_equal(&output, &hash).is_ok())
