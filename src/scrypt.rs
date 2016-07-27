@@ -361,13 +361,15 @@ pub fn scrypt_check(password: &str, hashed_value: &str) -> Result<bool, &'static
 
     // Check that there are no characters before the first "$"
     match iter.next() {
-        Some(x) => if x != "" { return Err(ERR_STR); },
+        Some(x) if x != "" => return Err(ERR_STR),
+        Some(_) => (),
         None => return Err(ERR_STR)
     }
 
     // Check the name
     match iter.next() {
-        Some(t) => if t != "rscrypt" { return Err(ERR_STR); },
+        Some(t) if t != "rscrypt" => return Err(ERR_STR),
+        Some(_) => (),
         None => return Err(ERR_STR)
     }
 
@@ -425,7 +427,8 @@ pub fn scrypt_check(password: &str, hashed_value: &str) -> Result<bool, &'static
 
     // Make sure that the input ends with a "$"
     match iter.next() {
-        Some(x) => if x != "" { return Err(ERR_STR); },
+        Some(x) if x != "" => return Err(ERR_STR),
+        Some(_) => (),
         None => return Err(ERR_STR)
     }
 
