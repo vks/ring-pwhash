@@ -211,10 +211,7 @@ impl ScryptParams {
         let n: usize = 1 << log_n;
 
         // check that r * 128 doesn't overflow
-        let r128 = match r.checked_mul(128) {
-            Some(x) => x,
-            None => panic!("Invalid Scrypt parameters.")
-        };
+        let r128 = r.checked_mul(128).expect("Invalid Scrypt parameters.");
 
         // check that n * r * 128 doesn't overflow
         match r128.checked_mul(n) {
