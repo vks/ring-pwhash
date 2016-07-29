@@ -19,32 +19,6 @@ password hash implementations thanks to the speed of [*ring*][ring]'s core primi
 No other algorithms are supported at this time, although it'd be great to add additional algorithms!
 Argon2 and bcrypt are both good candidates. Pull Requests Accepted!
 
-## Benchmark
-
-**NOTE:** *If you really care about performance, please run your own purpose-specific benchmark!*
-
-The performance of [scrypt] on `ring-pwhash` is approximately **1.8X** faster than the equivalent
-algorithm in `rust-crypto`.
-
-Below is the output of `time cargo test scrypt::test::test_scrypt` for both `ring-pwhash` and the
-upstream `rust-crypto` library (measured by 2.3GHz Intel Core i7 running Mac OS X 10.11.5):
-
-### ring-pwhash
-
-```
-$ time cargo test scrypt::test::test_scrypt
-[...]
-cargo test scrypt::test::test_scrypt  9.11s user 0.09s system 107% cpu 8.592 total
-```
-
-### rust-crypto
-
-```
-$ time cargo test scrypt::test::test_scrypt
-[...]
-cargo test scrypt::test::test_scrypt  16.92s user 0.14s system 107% cpu 15.833 total
-```
-
 ## License
 
 ring-pwhash is a fork of [rust-crypto], and is dual licensed under the MIT and
