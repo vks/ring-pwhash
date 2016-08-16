@@ -1,12 +1,13 @@
 [package]
 name        = "ring-pwhash"
-version     = "0.1.0"
+version     = "0.1.1"
 description = "A collection of password hashing functions, using *ring* cryptographic primitives"
 authors     = ["Tony Arcieri <bascule@gmail.com>", "The Rust-Crypto Project Developers"]
 homepage    = "https://github.com/cryptosphere/ring-pwhash"
 repository  = "https://github.com/cryptosphere/ring-pwhash"
 license     = "MIT/Apache-2.0"
 readme      = "README.md"
+keywords    = ["password", "scrypt", "ring"]
 
 [lib]
 name = "ring_pwhash"
