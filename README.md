@@ -25,5 +25,5 @@ ring-pwhash is a fork of [rust-crypto], and is dual licensed under the MIT and
 Apache 2.0 licenses, the same licenses as rust-crypto.
 
 [ring]: https://github.com/briansmith/ring
-[scrypt]: https://en.wikipedia.org/wiki/Scrypt
+[scrypt]: https://www.rfc-editor.org/rfc/rfc7914.txt
 [rust-crypto]: https://github.com/DaGenix/rust-crypto
