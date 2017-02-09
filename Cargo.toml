@@ -8,6 +8,7 @@ repository  = "https://github.com/cryptosphere/ring-pwhash"
 license     = "MIT/Apache-2.0"
 readme      = "README.md"
 keywords    = ["password", "scrypt", "ring"]
+categories  = ["authentication", "cryptography"]
 
 [lib]
 name = "ring_pwhash"
