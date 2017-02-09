@@ -1,6 +1,6 @@
 [package]
 name        = "ring-pwhash"
-version     = "0.1.1"
+version     = "0.1.2"
 description = "A collection of password hashing functions, using *ring* cryptographic primitives"
 authors     = ["Tony Arcieri <bascule@gmail.com>", "The Rust-Crypto Project Developers"]
 homepage    = "https://github.com/cryptosphere/ring-pwhash"
