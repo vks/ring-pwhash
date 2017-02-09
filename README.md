@@ -1,4 +1,11 @@
-# ring-pwhash
+# ring-pwhash [![Latest Version][crate-image]][crate-link] [![Build Status][build-image]][build-link] [![Apache 2 licensed][license-image]][license-link]
+
+[crate-image]: https://img.shields.io/crates/v/ring-pwhash.svg
+[crate-link]: https://crates.io/crates/ring-pwhash
+[build-image]: https://travis-ci.org/cryptosphere/ring-pwhash.svg?branch=master
+[build-link]: https://travis-ci.org/cryptosphere/ring-pwhash
+[license-image]: https://img.shields.io/badge/license-MIT-blue.svg
+[license-link]: https://github.com/cryptosphere/ring-pwhash/blob/master/LICENSE
 
 A collection of password hashing functions, using [*ring*][ring] cryptographic primitives
 
