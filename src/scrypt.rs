@@ -114,8 +114,7 @@ fn scrypt_ro_mix(b: &mut [u8], v: &mut [u8], t: &mut [u8], n: usize) {
         let mask = n - 1;
         // This cast is safe since we're going to get the value mod n (which is a power of 2), so we
         // don't have to care about truncating any of the high bits off
-        let result = (read_u32_le(&x[x.len() - 64..x.len() - 60]) as usize) & mask;
-        result
+        (read_u32_le(&x[x.len() - 64..x.len() - 60]) as usize) & mask
     }
 
     let len = b.len();
@@ -133,7 +132,7 @@ fn scrypt_ro_mix(b: &mut [u8], v: &mut [u8], t: &mut [u8], n: usize) {
 }
 
 fn read_u32_le(input: &[u8]) -> u32 {
-    assert!(input.len() == 4);
+    assert_eq!(input.len(), 4);
     unsafe {
         let mut tmp: u32 = mem::uninitialized();
         ptr::copy_nonoverlapping(input.get_unchecked(0), &mut tmp as *mut _ as *mut u8, 4);
@@ -142,7 +141,7 @@ fn read_u32_le(input: &[u8]) -> u32 {
 }
 
 fn read_u32v_le(dst: &mut[u32], input: &[u8]) {
-    assert!(dst.len() * 4 == input.len());
+    assert_eq!(dst.len() * 4, input.len());
     unsafe {
         let mut x: *mut u32 = dst.get_unchecked_mut(0);
         let mut y: *const u8 = input.get_unchecked(0);
@@ -157,7 +156,7 @@ fn read_u32v_le(dst: &mut[u32], input: &[u8]) {
 }
 
 fn write_u32_le(dst: &mut[u8], mut input: u32) {
-    assert!(dst.len() == 4);
+    assert_eq!(dst.len(), 4);
     input = input.to_le();
     unsafe {
         let tmp = &input as *const _ as *const u8;
@@ -192,9 +191,9 @@ impl ScryptParams {
      *
      * # Arguments
      *
-     * * log_n - The log2 of the Scrypt parameter N
-     * * r - The Scrypt parameter r
-     * * p - The Scrypt parameter p
+     * * `log_n` - The log2 of the Scrypt parameter N
+     * * `r` - The Scrypt parameter r
+     * * `p` - The Scrypt parameter p
      *
      */
     pub fn new(log_n: u8, r: u32, p: u32) -> ScryptParams {
@@ -202,7 +201,8 @@ impl ScryptParams {
         assert!(p > 0);
         assert!(log_n > 0);
         assert!((log_n as usize) < size_of::<usize>() * 8);
-        assert!(size_of::<usize>() >= size_of::<u32>() || (r <= std::usize::MAX as u32 && p < std::usize::MAX as u32));
+        assert!(size_of::<usize>() >= size_of::<u32>()
+                || (r <= std::usize::MAX as u32 && p < std::usize::MAX as u32));
 
         let r = r as usize;
         let p = p as usize;
@@ -248,16 +248,16 @@ static PBKDF2_PRF: &'static pbkdf2::PRF = &pbkdf2::HMAC_SHA256;
  *
  * # Arguments
  *
- * * password - The password to process as a byte vector
- * * salt - The salt value to use as a byte vector
- * * params - The ScryptParams to use
- * * output - The resulting derived key is returned in this byte vector.
+ * * `password` - The password to process as a byte vector
+ * * `salt` - The salt value to use as a byte vector
+ * * `params` - The `ScryptParams` to use
+ * * `output` - The resulting derived key is returned in this byte vector.
  *
  */
 pub fn scrypt(password: &[u8], salt: &[u8], params: &ScryptParams, output: &mut [u8]) {
     // This check required by Scrypt:
     // check output.len() > 0 && output.len() <= (2^32 - 1) * 32
-    assert!(output.len() > 0);
+    assert!(!output.is_empty());
     assert!(output.len() / 32 <= 0xffffffff);
 
     // The checks in the ScryptParams constructor guarantee that the following is safe:
@@ -280,9 +280,9 @@ pub fn scrypt(password: &[u8], salt: &[u8], params: &ScryptParams, output: &mut 
 }
 
 /**
- * scrypt_simple is a helper function that should be sufficient for the majority of cases where
- * an application needs to use Scrypt to hash a password for storage. The result is a String that
- * contains the parameters used as part of its encoding. The scrypt_check function may be used on
+ * `scrypt_simple` is a helper function that should be sufficient for the majority of cases where
+ * an application needs to use Scrypt to hash a password for storage. The result is a `String` that
+ * contains the parameters used as part of its encoding. The `scrypt_check` function may be used on
  * a password to check if it is equal to a hashed value.
  *
  * # Format
@@ -297,8 +297,8 @@ pub fn scrypt(password: &[u8], salt: &[u8], params: &ScryptParams, output: &mut 
  *
  * # Arguments
  *
- * * password - The password to process as a str
- * * params - The ScryptParams to use
+ * * `password` - The password to process as a string
+ * * `params` - The `ScryptParams` to use
  *
  */
 pub fn scrypt_simple(password: &str, params: &ScryptParams) -> io::Result<String> {
@@ -339,13 +339,13 @@ pub fn scrypt_simple(password: &str, params: &ScryptParams) -> io::Result<String
 }
 
 /**
- * scrypt_check compares a password against the result of a previous call to scrypt_simple and
+ * `scrypt_check` compares a password against the result of a previous call to `scrypt_simple` and
  * returns true if the passed in password hashes to the same value.
  *
  * # Arguments
  *
- * * password - The password to process as a str
- * * hashed_value - A string representing a hashed password returned by scrypt_simple()
+ * * `password` - The password to process as a string
+ * * `hashed_value` - A string representing a hashed password returned by `scrypt_simple`
  *
  */
 pub fn scrypt_check(password: &str, hashed_value: &str) -> Result<bool, &'static str> {
