@@ -1,3 +1,9 @@
+## 0.2.0 (2017-05-16)
+
+* Update to ring 0.9
+* Replace rustc-serialize with data-encoding
+* Fix most clippy warnings
+
 ## 0.1.2 (2017-02-08)
 
 * Add categories to Cargo.toml
