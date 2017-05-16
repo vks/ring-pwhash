@@ -1,7 +1,9 @@
-# ring-pwhash [![Latest Version][crate-image]][crate-link] [![Build Status][build-image]][build-link] [![Apache 2 licensed][license-image]][license-link]
+# ring-pwhash [![Latest Version][crate-image]][crate-link] [![Docs][docs-image]][docs-link] [![Build Status][build-image]][build-link] [![Apache 2 licensed][license-image]][license-link]
 
 [crate-image]: https://img.shields.io/crates/v/ring-pwhash.svg
 [crate-link]: https://crates.io/crates/ring-pwhash
+[docs-image]: https://docs.rs/ring-pwhash/badge.svg
+[docs-link]: https://docs.rs/ring-pwhash/
 [build-image]: https://travis-ci.org/cryptosphere/ring-pwhash.svg?branch=master
 [build-link]: https://travis-ci.org/cryptosphere/ring-pwhash
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg
@@ -25,6 +27,10 @@ password hash implementations thanks to the speed of [*ring*][ring]'s core primi
 
 No other algorithms are supported at this time, although it'd be great to add additional algorithms!
 Argon2 and bcrypt are both good candidates. Pull Requests Accepted!
+
+## Documentation
+
+[Documentation](https://docs.rs/ring-pwhash/)
 
 ## License
 
