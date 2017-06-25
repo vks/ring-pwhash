@@ -19,7 +19,7 @@ use std::mem::size_of;
 
 use data_encoding::base64;
 
-use ring::{rand, pbkdf2, constant_time};
+use ring::{rand, pbkdf2, constant_time, digest};
 
 // The salsa20/8 core function.
 fn salsa20_8(input: &[u8], output: &mut [u8]) {
@@ -241,7 +241,7 @@ impl ScryptParams {
     }
 }
 
-static PBKDF2_PRF: &'static pbkdf2::PRF = &pbkdf2::HMAC_SHA256;
+static DIGEST_ALG: &'static digest::Algorithm = &digest::SHA256;
 
 /**
  * The scrypt key derivation function.
@@ -267,7 +267,7 @@ pub fn scrypt(password: &[u8], salt: &[u8], params: &ScryptParams, output: &mut 
     let nr128 = n * r128;
 
     let mut b: Vec<u8> = repeat(0).take(pr128).collect();
-    pbkdf2::derive(PBKDF2_PRF, 1, salt, password, b.as_mut_slice());
+    pbkdf2::derive(DIGEST_ALG, 1, salt, password, b.as_mut_slice());
 
     let mut v: Vec<u8> = repeat(0).take(nr128).collect();
     let mut t: Vec<u8> = repeat(0).take(r128).collect();
@@ -276,7 +276,7 @@ pub fn scrypt(password: &[u8], salt: &[u8], params: &ScryptParams, output: &mut 
         scrypt_ro_mix(chunk, v.as_mut_slice(), t.as_mut_slice(), n);
     }
 
-    pbkdf2::derive(PBKDF2_PRF, 1, &b, password, output);
+    pbkdf2::derive(DIGEST_ALG, 1, &b, password, output);
 }
 
 /**
