@@ -1,3 +1,8 @@
+## 0.11.0 (2017-06-24)
+
+* Update to *ring* 0.11
+* Bump version to 0.11 to track *ring*
+
 ## 0.2.0 (2017-05-16)
 
 * Update to ring 0.9
