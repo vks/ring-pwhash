@@ -17,7 +17,7 @@ use std::iter::repeat;
 use std::{io, mem, ptr};
 use std::mem::size_of;
 
-use data_encoding::base64;
+use data_encoding::BASE64;
 
 use ring::{rand, pbkdf2, constant_time, digest};
 
@@ -321,19 +321,19 @@ pub fn scrypt_simple(password: &str, params: &ScryptParams) -> io::Result<String
         tmp[0] = params.log_n;
         tmp[1] = params.r as u8;
         tmp[2] = params.p as u8;
-        result.push_str(&base64::encode(&tmp));
+        result.push_str(&BASE64.encode(&tmp));
     } else {
         result.push_str("1$");
         let mut tmp = [0u8; 9];
         tmp[0] = params.log_n;
         write_u32_le(&mut tmp[1..5], params.r);
         write_u32_le(&mut tmp[5..9], params.p);
-        result.push_str(&base64::encode(&tmp));
+        result.push_str(&BASE64.encode(&tmp));
     }
     result.push('$');
-    result.push_str(&base64::encode(&salt));
+    result.push_str(&BASE64.encode(&salt));
     result.push('$');
-    result.push_str(&base64::encode(&dk));
+    result.push_str(&BASE64.encode(&dk));
     result.push('$');
 
     Ok(result)
@@ -375,7 +375,7 @@ pub fn scrypt_check(password: &str, hashed_value: &str) -> Result<bool, &'static
     // Parse the parameters - the size of them depends on the if we are using the compact or
     // expanded format
     let pvec = match iter.next() {
-        Some(pstr) => match base64::decode(pstr.as_bytes()) {
+        Some(pstr) => match BASE64.decode(pstr.as_bytes()) {
             Ok(x) => x,
             Err(_) => return Err(ERR_STR)
         },
@@ -402,7 +402,7 @@ pub fn scrypt_check(password: &str, hashed_value: &str) -> Result<bool, &'static
 
     // Salt
     let salt = match iter.next() {
-        Some(sstr) => match base64::decode(sstr.as_bytes()) {
+        Some(sstr) => match BASE64.decode(sstr.as_bytes()) {
             Ok(salt) => salt,
             Err(_) => return Err(ERR_STR)
         },
@@ -411,7 +411,7 @@ pub fn scrypt_check(password: &str, hashed_value: &str) -> Result<bool, &'static
 
     // Hashed value
     let hash = match iter.next() {
-        Some(hstr) => match base64::decode(hstr.as_bytes()) {
+        Some(hstr) => match BASE64.decode(hstr.as_bytes()) {
             Ok(hash) => hash,
             Err(_) => return Err(ERR_STR)
         },
