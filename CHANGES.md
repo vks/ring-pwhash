@@ -1,3 +1,8 @@
+## 0.12.0 (2017-11-17)
+
+* Update to *ring* 0.12
+* Update to data-encoding 2.0
+
 ## 0.11.0 (2017-06-24)
 
 * Update to *ring* 0.11
