@@ -16,4 +16,4 @@ name = "ring_pwhash"
 [dependencies]
 libc = "0.2"
 data-encoding = "2"
-ring = "0.13"
+ring = "0.14"

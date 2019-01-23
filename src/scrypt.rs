@@ -16,6 +16,7 @@ use std;
 use std::iter::repeat;
 use std::{io, mem, ptr};
 use std::mem::size_of;
+use std::num::NonZeroU32;
 
 use data_encoding::BASE64;
 
@@ -242,6 +243,7 @@ impl ScryptParams {
 }
 
 static DIGEST_ALG: &'static digest::Algorithm = &digest::SHA256;
+const ONE: NonZeroU32 = unsafe { NonZeroU32::new_unchecked(1) };
 
 /**
  * The scrypt key derivation function.
@@ -267,7 +269,7 @@ pub fn scrypt(password: &[u8], salt: &[u8], params: &ScryptParams, output: &mut 
     let nr128 = n * r128;
 
     let mut b: Vec<u8> = repeat(0).take(pr128).collect();
-    pbkdf2::derive(DIGEST_ALG, 1, salt, password, b.as_mut_slice());
+    pbkdf2::derive(DIGEST_ALG, ONE, salt, password, b.as_mut_slice());
 
     let mut v: Vec<u8> = repeat(0).take(nr128).collect();
     let mut t: Vec<u8> = repeat(0).take(r128).collect();
@@ -276,7 +278,7 @@ pub fn scrypt(password: &[u8], salt: &[u8], params: &ScryptParams, output: &mut 
         scrypt_ro_mix(chunk, v.as_mut_slice(), t.as_mut_slice(), n);
     }
 
-    pbkdf2::derive(DIGEST_ALG, 1, &b, password, output);
+    pbkdf2::derive(DIGEST_ALG, ONE, &b, password, output);
 }
 
 /**
